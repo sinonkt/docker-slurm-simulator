@@ -4,7 +4,11 @@
 
 # populating SlurmDB using Slurm sacctmgr utility
 export SLURM_CONF=/home/slurm/slurm_sim_ws/sim/micro/baseline/etc/slurm.conf
-SACCTMGR=/home/slurm/slurm_sim_ws/slurm_opt/bin/sacctmgr
+#SACCTMGR=/home/slurm/slurm_sim_ws/slurm_opt/bin/sacctmgr
+mysql -e "create user 'slurm'@'localhost' identified by 'slurm';"
+mysql -e "GRANT ALL PRIVILEGES ON *.* TO 'slurm'@'localhost' IDENTIFIED BY 'slurm';"
+
+SACCTMGR=sacctmgr
 
 # add QOS
 $SACCTMGR -i modify QOS set normal Priority=0
