@@ -2,7 +2,12 @@ FROM centos/systemd:latest
 
 LABEL maintainer="oatkrittin@gmail.com"
 
-ENV SLURM_VERSION=17.11.9-2 \
+ENV SLURM_SIMULATOR_SOURCE_REPO=https://github.com/ubccr-slurm-simulator/slurm_simulator.git \
+    SLURM_SIMULATOR_BRANCH=slurm-17-11_Sim \
+    SLURM_HOME=/opt/slurm \
+    SLURM_ETC=/opt/slurm/etc \
+    TRACES_DIR=/traces \
+    PATH=/opt/slurm/bin:/opt/slurm/sbin:$PATH \
     MUNGE_VERSION=0.5.13 \
     ROOT_HOME=/root \
     ROOT_RPMS=/root/rpmbuild/RPMS/x86_64
@@ -70,16 +75,25 @@ RUN chown munge:munge /var/lib/munge && \
     chmod 600 /etc/munge/munge.key
 ADD etc/supervisord.d/munged.ini /etc/supervisord.d/munged.ini
 
-# Build Slurm-* rpm packages ready for variant to pick and install
-RUN wget https://download.schedmd.com/slurm/slurm-${SLURM_VERSION}.tar.bz2 && \
-    rpmbuild -ta --clean slurm-${SLURM_VERSION}.tar.bz2 && \
-    rm -f slurm-${SLURM_VERSION}.tar.bz2
+# follow ubccr-slurm-simulator/slurm-simulator guide
+# Switch to slurm user so the next directories made are owned by slurm
+# USER slurm 
 
-# Install slurm, slurmctld, slurm-perlapi
-RUN rpm -ivh ${ROOT_RPMS}/slurm-${SLURM_VERSION}.el7.x86_64.rpm \
-  ${ROOT_RPMS}/slurm-slurmctld-${SLURM_VERSION}.el7.x86_64.rpm \
-  ${ROOT_RPMS}/slurm-perlapi-${SLURM_VERSION}.el7.x86_64.rpm && \
-  rm -rf ${ROOT_RPMS}/*
+# installing slurm simulator
+RUN cd /home/slurm && \
+  git clone --single-branch -b $SLURM_SIMULATOR_BRANCH $SLURM_SIMULATOR_SOURCE_REPO && \
+  cd slurm_simulator && \
+  ./configure \
+    --prefix=$SLURM_HOME \
+    --enable-simulator \
+    --enable-pam \
+    --without-munge \
+    --enable-front-end \
+    --with-mysql-config=/usr/bin/ \
+    --disable-debug \
+    CFLAGS="-g -O3 -D NDEBUG=1" \
+    && \
+  make -j install
 
 # Configure OpenSSH
 # Also see: https://docs.docker.com/engine/examples/running_ssh_service/
@@ -108,6 +122,10 @@ ADD etc/systemd/system/supervisord.service /etc/systemd/system/supervisord.servi
 RUN chmod 664 /etc/systemd/system/supervisord.service && \
     ln -s /etc/systemd/system/supervisord.service /etc/systemd/system/multi-user.target.wants/supervisord.service
 
-VOLUME [ "/sys/fs/cgroup", "/etc/slurm" ]
+# Expose traces mount point
+RUN mkdir -p $TRACES_DIR && \
+  chown slurm: $TRACES_DIR
+
+VOLUME [ "/sys/fs/cgroup", "${SLURM_ETC}", "${TRACES_DIR}" ]
 
 EXPOSE 22 6817 3306

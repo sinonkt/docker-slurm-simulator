@@ -1,1 +1,0 @@
-docker run --cap-add=SYS_ADMIN -v /sys/fs/cgroup:/sys/fs/cgroup:ro -v $(pwd)/etc/slurm:/etc/slurm dss &
