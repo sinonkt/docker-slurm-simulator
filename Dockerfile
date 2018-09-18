@@ -126,6 +126,11 @@ RUN chmod 664 /etc/systemd/system/supervisord.service && \
 RUN mkdir -p $TRACES_DIR && \
   chown slurm: $TRACES_DIR
 
+# Poppulate SlumDbd script.
+ADD run_sim.sh /usr/bin/run_sim.sh
+RUN chmod u+x /usr/bin/run_sim.sh
+
 VOLUME [ "/sys/fs/cgroup", "${SLURM_ETC}", "${TRACES_DIR}" ]
+
 
 EXPOSE 22 6817 3306
