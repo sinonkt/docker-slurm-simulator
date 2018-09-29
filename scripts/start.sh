@@ -7,4 +7,4 @@ docker run --cap-add=SYS_ADMIN \
   -v /sys/fs/cgroup:/sys/fs/cgroup:ro \
   -v $LOG_PATH:/var/log/slurm \
   -v $ETC_PATH:/slurm/etc \
-  -v $TRACES_PATH:/traces dss &
+  -v $TRACES_PATH:/traces sinonkt/docker-slurm-simulator:latest &
