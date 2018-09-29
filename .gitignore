@@ -1,7 +1,3 @@
-.Rproj.user
-.Rhistory
-.RData
-.Ruserdata
-.project
-.pydevproject
-
+test/etc/sim.conf
+test/etc/users.sim
+logs

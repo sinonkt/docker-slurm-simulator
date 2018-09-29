@@ -1,3 +1,0 @@
-useDynLib(RSlurmSimTools)
-exportPattern("^[[:alpha:]]+")
-importFrom(Rcpp, evalCpp)

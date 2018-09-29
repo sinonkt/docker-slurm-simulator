@@ -1,3 +1,10 @@
-ETC_PATH=/Users/Krittin/Code/sinonkt/docker-slurm-simulator/reg_testing/micro_cluster/etc
-TRACES_PATH=/Users/Krittin/Code/sinonkt/docker-slurm-simulator/reg_testing/micro_cluster/traces
-docker run --cap-add=SYS_ADMIN -v /sys/fs/cgroup:/sys/fs/cgroup:ro -v $ETC_PATH:/opt/slurm/etc -v $TRACES_PATH:/traces dss &
+PROJECT_DIR=/Users/Krittin/Code/sinonkt/docker-slurm-simulator/
+ETC_PATH=${PROJECT_DIR}/test/etc
+TRACES_PATH=${PROJECT_DIR}/test/traces
+LOG_PATH=${PROJECT_DIR}/logs
+
+docker run --cap-add=SYS_ADMIN \
+  -v /sys/fs/cgroup:/sys/fs/cgroup:ro \
+  -v $LOG_PATH:/var/log/slurm \
+  -v $ETC_PATH:/slurm/etc \
+  -v $TRACES_PATH:/traces dss &

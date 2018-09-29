@@ -122,15 +122,11 @@ ADD etc/systemd/system/supervisord.service /etc/systemd/system/supervisord.servi
 RUN chmod 664 /etc/systemd/system/supervisord.service && \
     ln -s /etc/systemd/system/supervisord.service /etc/systemd/system/multi-user.target.wants/supervisord.service
 
-# Expose traces mount point
-RUN mkdir -p $TRACES_DIR && \
-  chown slurm: $TRACES_DIR
-
 # Poppulate SlumDbd script.
-ADD run_sim.sh /usr/bin/run_sim.sh
-RUN chmod u+x /usr/bin/run_sim.sh
+ADD scripts/simulate /usr/bin/simulate
+RUN chmod u+x /usr/bin/simulate && \
+    rm -rf $SLURM_ETC
 
-VOLUME [ "/sys/fs/cgroup", "${SLURM_ETC}", "${TRACES_DIR}" ]
-
+VOLUME [ "/sys/fs/cgroup", "/var/log/slurm" ]
 
 EXPOSE 22 6817 3306

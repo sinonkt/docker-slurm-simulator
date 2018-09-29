@@ -1,0 +1,32 @@
+#!/bin/bash
+
+SLURM_ETC=$1
+TRACE_FILE=$2
+TRACE_DIR=$(dirname "${TRACE_FILE}")
+SLURM_SIMULATOR=/opt/slurm
+
+# link generated users.sim in Trace dir to Etc dir, for being used by Slurm Simulator.
+# `users.sim` file MUST be Available in TRACE_DIR, file name was fixed by conventions.
+ln -s ${TRACE_DIR}/users.sim ${SLURM_ETC}/users.sim
+
+# link Slurm etc to actually installed location.
+ln -s ${SLURM_ETC} ${SLURM_SIMULATOR}/etc
+
+# Set trace file to be simulated for this run.
+sed 's|###JobsTraceFile###|'$TRACE_FILE'|g' ${SLURM_ETC}/sim.conf.tmpl \
+  > ${SLURM_ETC}/sim.conf 
+
+# Initialize slurmdb daemon as background for thir run.
+# Waiting for mariadb to be up and running. and also for slurmdbd. 
+sleep 10
+mysql -e "create user 'slurm'@'localhost' identified by 'slurm';"
+mysql -e "GRANT ALL PRIVILEGES ON *.* TO 'slurm'@'localhost' IDENTIFIED BY 'slurm';"
+slurmdbd -Dvvv &
+sleep 10
+
+# Initialize Account script
+# `init_account` file MUST be Available in TRACE_DIR, file name was fixed by conventions.
+${TRACE_DIR}/init_account
+
+# Start Running Simulation by running SlurmCtld as daemon on foreground.
+slurmctld -Dvvv
