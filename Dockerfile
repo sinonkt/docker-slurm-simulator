@@ -101,31 +101,32 @@ ENV NOTVISIBLE "in users profile"
 RUN echo "export VISIBLE=now" >> /etc/profile
 RUN mkdir /var/run/sshd
 RUN echo 'slurm:slurm' | chpasswd
+
 # SSH login fix. Otherwise user is kicked off after login
 RUN sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' -i /etc/pam.d/sshd
 ADD etc/ssh/sshd_config /etc/ssh/sshd_config
 RUN cd /etc/ssh/ && \
     ssh-keygen -t rsa -b 4096 -f ssh_host_rsa_key -N ''
 
-# Fixed ownership and permission of Slurm
-RUN mkdir /var/spool/slurmctld /var/log/slurm && \
-  chown slurm: /var/spool/slurmctld /var/log/slurm && \
-  chmod 755 /var/spool/slurmctld /var/log/slurm && \
-  touch /var/log/slurm/slurmctld.log && \
-  chown slurm: /var/log/slurm/slurmctld.log
+# # Fixed ownership and permission of Slurm
+# RUN mkdir /var/spool/slurmctld /var/log/slurm && \
+#   chown slurm: /var/spool/slurmctld /var/log/slurm && \
+#   chmod 755 /var/spool/slurmctld /var/log/slurm && \
+#   touch /var/log/slurm/slurmctld.log && \
+#   chown slurm: /var/log/slurm/slurmctld.log
 
-# Enable MariaDB service
-RUN ln -s /usr/lib/systemd/system/mariadb.service /etc/systemd/system/multi-user.target.wants/mariadb.service
+# # Enable MariaDB service
+# RUN ln -s /usr/lib/systemd/system/mariadb.service /etc/systemd/system/multi-user.target.wants/mariadb.service
 
-# Configure supervisord as one of systemd service
-ADD etc/systemd/system/supervisord.service /etc/systemd/system/supervisord.service 
-RUN chmod 664 /etc/systemd/system/supervisord.service && \
-    ln -s /etc/systemd/system/supervisord.service /etc/systemd/system/multi-user.target.wants/supervisord.service
+# # Configure supervisord as one of systemd service
+# ADD etc/systemd/system/supervisord.service /etc/systemd/system/supervisord.service 
+# RUN chmod 664 /etc/systemd/system/supervisord.service && \
+#     ln -s /etc/systemd/system/supervisord.service /etc/systemd/system/multi-user.target.wants/supervisord.service
 
-# Poppulate SlumDbd script.
-ADD scripts/simulate /usr/bin/simulate
-RUN chmod u+x /usr/bin/simulate && \
-    rm -rf $SLURM_ETC
+# # Poppulate SlumDbd script.
+# ADD scripts/simulate /usr/bin/simulate
+# RUN chmod u+x /usr/bin/simulate && \
+#     rm -rf $SLURM_ETC
 
 VOLUME [ "/sys/fs/cgroup", "/var/log/slurm" ]
 

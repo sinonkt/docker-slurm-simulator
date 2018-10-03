@@ -1,5 +1,4 @@
 #! /bin/bash
-
 # add QOS
 sacctmgr -i modify QOS set normal Priority=0
 sacctmgr -i add QOS Name=supporters Priority=100
