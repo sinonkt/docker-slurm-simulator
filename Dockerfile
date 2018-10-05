@@ -11,11 +11,9 @@ ENV SLURM_SIMULATOR_SOURCE_REPO=https://github.com/ubccr-slurm-simulator/slurm_s
     ROOT_HOME=/root \
     ROOT_RPMS=/root/rpmbuild/RPMS/x86_64
 
-WORKDIR ${ROOT_HOME} 
 # Create users, set up SSH keys (for MPI), add sudoers
 # -r for system account, -s for route shell to none bash one, -m for make home.
 # Explicitly state UID & GID for synchronsization across cluster 
-ADD etc/sudoers /etc/sudoers
 RUN groupadd -r -g 3333 slurm && \
     useradd -r -u 3333 -g 3333 -s /bin/bash -m -d /home/slurm slurm
 
@@ -29,7 +27,6 @@ RUN yum -y update && \
     yum -y install epel-release && \
     yum -y groupinstall "Development Tools" && \
     yum -y install \
-    wget \
     ntp \
     openssh-server \
     supervisor \
@@ -38,10 +35,6 @@ RUN yum -y update && \
     perl-ExtUtils-MakeMaker \
     pam-devel \
     mysql-devel \
-    which \
-    net-tools \
-    telnet \
-    bind-utils \
     mariadb-server \
     mariadb-devel \
     && \
