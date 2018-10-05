@@ -8,7 +8,6 @@ ENV SLURM_SIMULATOR_SOURCE_REPO=https://github.com/ubccr-slurm-simulator/slurm_s
     SLURM_ETC=/opt/slurm/etc \
     TRACES_DIR=/traces \
     PATH=/opt/slurm/bin:/opt/slurm/sbin:$PATH \
-    MUNGE_VERSION=0.5.13 \
     ROOT_HOME=/root \
     ROOT_RPMS=/root/rpmbuild/RPMS/x86_64
 
@@ -23,7 +22,6 @@ RUN groupadd -r -g 3333 slurm && \
 # Install dependencies
 # epel-repository
 # Development Tools included gcc, gcc-c++, rpm-guild, git, svn, etc.
-# bzip2-devel, openssl-devel, zlib-devel needed by munge
 # readline-devel, openssl, perl-ExtUtils-MakeMaker, pam-devel, mysql-devel needed by slurm
 # which, wget, net-tools, bind-tools(nslookup), telnet for debugging
 # mariadb-server mariadb-devel for mysql slurm account db
@@ -35,9 +33,6 @@ RUN yum -y update && \
     ntp \
     openssh-server \
     supervisor \
-    bzip2-devel \
-    openssl-devel \
-    zlib-devel \
     readline-devel \
     openssl \
     perl-ExtUtils-MakeMaker \
@@ -53,27 +48,6 @@ RUN yum -y update && \
     yum clean all && \
     rm -rf /var/cache/yum/*
 
-
-# Create user `munge`
-RUN groupadd -g 981 munge && \
-    useradd  -m -d /var/lib/munge -u 981 -g munge  -s /sbin/nologin munge
-
-# Install munge
-RUN wget https://github.com/dun/munge/releases/download/munge-${MUNGE_VERSION}/munge-${MUNGE_VERSION}.tar.xz && \
-    rpmbuild -tb --clean munge-${MUNGE_VERSION}.tar.xz && \ 
-    rpm -ivh ${ROOT_RPMS}/munge-${MUNGE_VERSION}-1.el7.x86_64.rpm \
-        ${ROOT_RPMS}/munge-libs-${MUNGE_VERSION}-1.el7.x86_64.rpm \
-        ${ROOT_RPMS}/munge-devel-${MUNGE_VERSION}-1.el7.x86_64.rpm && \
-    rm -f munge-${MUNGE_VERSION}.tar.xz 
-
-# Configure munge (for SLURM authentication)
-ADD etc/munge/munge.key /etc/munge/munge.key
-RUN chown munge:munge /var/lib/munge && \
-    chown munge:munge /etc/munge/munge.key && \
-    chown munge:munge /etc/munge && chmod 600 /var/run/munge && \
-    chmod 755 /run/munge && \
-    chmod 600 /etc/munge/munge.key
-ADD etc/supervisord.d/munged.ini /etc/supervisord.d/munged.ini
 
 # follow ubccr-slurm-simulator/slurm-simulator guide
 # Switch to slurm user so the next directories made are owned by slurm
