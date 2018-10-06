@@ -1,4 +1,4 @@
-FROM centos/systemd:latest
+FROM centos:7
 
 LABEL maintainer="oatkrittin@gmail.com"
 
@@ -22,7 +22,15 @@ RUN groupadd -r -g 3333 slurm && \
 # mariadb-server mariadb-devel for mysql slurm account db
 RUN yum -y update && \
     yum -y install epel-release && \
-    yum -y groupinstall "Development Tools" && \
+    yum -y install \
+        gcc-c++ \
+        python34 \
+        python34-libs \
+        python34-devel \
+        python34-numpy \
+        python34-scipy \ 
+        python34-pip \
+    && \
     yum -y install \
     ntp \
     openssh-server \
@@ -37,7 +45,6 @@ RUN yum -y update && \
     && \
     yum clean all && \
     rm -rf /var/cache/yum/*
-
 
 # follow ubccr-slurm-simulator/slurm-simulator guide
 # Switch to slurm user so the next directories made are owned by slurm
@@ -78,14 +85,19 @@ RUN mkdir /var/spool/slurmctld /var/log/slurm && \
   touch /var/log/slurm/slurmctld.log && \
   chown slurm: /var/log/slurm/slurmctld.log
 
-# Enable MariaDB service
-RUN ln -s /usr/lib/systemd/system/mariadb.service /etc/systemd/system/multi-user.target.wants/mariadb.service
-
 # Poppulate SlumDbd script.
 ADD scripts/simulate /usr/bin/simulate
-RUN chmod u+x /usr/bin/simulate && \
+ADD scripts/process_sdiag.py /usr/bin/process_sdiag
+ADD scripts/process_simstat.py /usr/bin/process_simstat
+ADD scripts/process_sinfo /usr/bin/process_sinfo
+ADD scripts/process_squeue /usr/bin/process_squeue
+RUN chmod u+x \
+    /usr/bin/simulate \
+    /usr/bin/process_sdiag \
+    /usr/bin/process_simstat \
+    /usr/bin/process_sinfo \
+    /usr/bin/process_squeue \
+    && \
     rm -rf $SLURM_ETC
 
-VOLUME [ "/sys/fs/cgroup", "/var/log/slurm" ]
-
-EXPOSE 22 6817 3306
+VOLUME [ "/var/log/slurm" ]
