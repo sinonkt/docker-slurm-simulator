@@ -6,9 +6,9 @@ From: centos:7
     maintainer="oatkrittin@gmail.com"
 
 %files
-    default/sim.conf /default/sim.conf
-    default/slurm.conf /default/slurm.conf
-    default/slurmdbd.conf /default/slurmdbd.conf
+    default/sim.conf /sim.default.conf
+    default/slurm.conf /slurm.default.conf
+    default/slurmdbd.conf /slurmdbd.default.conf
     scripts/hostlist.py /usr/bin/hostlist.py
     scripts/slurm_parser.py /usr/bin/slurm_parser.py
     scripts/simulate /usr/bin/simulate
@@ -125,4 +125,3 @@ From: centos:7
         /usr/bin/get_slurm_conf \
         /usr/bin/overide_conf
     mkdir -p $SLURM_ETC
-    mkdir -p /default

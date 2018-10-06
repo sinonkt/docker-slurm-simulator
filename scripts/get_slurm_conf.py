@@ -13,5 +13,5 @@ if __name__ == '__main__':
         help="Parameter to get value")
     
     args = parser.parse_args()
-    val = slurm_conf_parser(args.config)[args.parameter]
+    val = slurm_conf_parser(args.config)[args.parameter.lower()]
     print(val)

@@ -96,9 +96,9 @@ ADD scripts/hostlist.py /usr/bin/hostlist.py
 ADD scripts/slurm_parser.py /usr/bin/slurm_parser.py
 
 # Add default configs to overide
-ADD default/sim.conf /default/sim.conf
-ADD default/slurm.conf /default/slurm.conf
-ADD default/slurmdbd.conf /default/slurmdbd.conf
+ADD default/sim.conf /sim.default.conf
+ADD default/slurm.conf /slurm.default.conf
+ADD default/slurmdbd.conf /slurmdbd.default.conf
 
 # All necessary scripts
 ADD scripts/simulate /usr/bin/simulate
@@ -119,7 +119,6 @@ RUN chmod u+x \
     /usr/bin/process_squeue \
     /usr/bin/get_slurm_conf \
     /usr/bin/overide_conf && \
-    mkdir -p $SLURM_ETC && \
-    mkdir -p /default
+    mkdir -p $SLURM_ETC
 
 VOLUME [ "/var/log/slurm" ]
