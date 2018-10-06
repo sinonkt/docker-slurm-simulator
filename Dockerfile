@@ -23,6 +23,7 @@ RUN groupadd -r -g 3333 slurm && \
 RUN yum -y update && \
     yum -y install epel-release && \
     yum -y install \
+        git \
         gcc-c++ \
         python34 \
         python34-libs \
@@ -89,8 +90,8 @@ RUN mkdir /var/spool/slurmctld /var/log/slurm && \
 ADD scripts/simulate /usr/bin/simulate
 ADD scripts/process_sdiag.py /usr/bin/process_sdiag
 ADD scripts/process_simstat.py /usr/bin/process_simstat
-ADD scripts/process_sinfo /usr/bin/process_sinfo
-ADD scripts/process_squeue /usr/bin/process_squeue
+ADD scripts/process_sinfo.py /usr/bin/process_sinfo
+ADD scripts/process_squeue.py /usr/bin/process_squeue
 RUN chmod u+x \
     /usr/bin/simulate \
     /usr/bin/process_sdiag \
