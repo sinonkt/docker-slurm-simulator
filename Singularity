@@ -5,7 +5,10 @@ From: centos/systemd:latest
 %labels
     maintainer="oatkrittin@gmail.com"
 
-%environment
+%files
+    scripts/simulate /usr/bin/simulate
+    
+%post
     SLURM_SIMULATOR_SOURCE_REPO=https://github.com/ubccr-slurm-simulator/slurm_simulator.git \
     SLURM_SIMULATOR_BRANCH=slurm-17-11_Sim
     SLURM_HOME=/opt/slurm
@@ -19,13 +22,7 @@ From: centos/systemd:latest
         SLURM_ETC \
         TRACES_DIR \
         PATH
-
-%files
-    etc/ssh/sshd_config /etc/ssh/sshd_config
-    etc/systemd/system/supervisord.service /etc/systemd/system/supervisord.service 
-    scripts/simulate /usr/bin/simulate
-    
-%post
+        
     # Create users, set up SSH keys (for MPI), add sudoers
     # -r for system account, -s for route shell to none bash one, -m for make home.
     # Explicitly state UID & GID for synchronsization across cluster 
