@@ -7,9 +7,7 @@ ENV SLURM_SIMULATOR_SOURCE_REPO=https://github.com/ubccr-slurm-simulator/slurm_s
     SLURM_HOME=/opt/slurm \
     SLURM_ETC=/opt/slurm/etc \
     TRACES_DIR=/traces \
-    PATH=/opt/slurm/bin:/opt/slurm/sbin:$PATH \
-    ROOT_HOME=/root \
-    ROOT_RPMS=/root/rpmbuild/RPMS/x86_64
+    PATH=/opt/slurm/bin:/opt/slurm/sbin:$PATH
 
 # Create users, set up SSH keys (for MPI), add sudoers
 # -r for system account, -s for route shell to none bash one, -m for make home.
@@ -21,7 +19,6 @@ RUN groupadd -r -g 3333 slurm && \
 # epel-repository
 # Development Tools included gcc, gcc-c++, rpm-guild, git, svn, etc.
 # readline-devel, openssl, perl-ExtUtils-MakeMaker, pam-devel, mysql-devel needed by slurm
-# which, wget, net-tools, bind-tools(nslookup), telnet for debugging
 # mariadb-server mariadb-devel for mysql slurm account db
 RUN yum -y update && \
     yum -y install epel-release && \
