@@ -1,6 +1,6 @@
 Bootstrap: docker
 
-FROM centos/systemd:latest
+From: centos/systemd:latest
 
 %labels
     maintainer="oatkrittin@gmail.com"
@@ -29,7 +29,7 @@ FROM centos/systemd:latest
     # Create users, set up SSH keys (for MPI), add sudoers
     # -r for system account, -s for route shell to none bash one, -m for make home.
     # Explicitly state UID & GID for synchronsization across cluster 
-    groupadd -r -g 3333 slurm && \
+    groupadd -r -g 3333 slurm
     useradd -r -u 3333 -g 3333 -s /bin/bash -m -d /home/slurm slurm
 
     # Install dependencies
@@ -62,7 +62,7 @@ FROM centos/systemd:latest
 
     # installing slurm simulator
     cd /home/slurm
-    git clone --single-branch -b $SLURM_SIMULATOR_BRANCH $SLURM_SIMULATOR_SOURCE_REPO && \
+    git clone --single-branch -b $SLURM_SIMULATOR_BRANCH $SLURM_SIMULATOR_SOURCE_REPO
     cd slurm_simulator
     ./configure \
         --prefix=$SLURM_HOME \
@@ -95,11 +95,7 @@ FROM centos/systemd:latest
 
     # Enable MariaDB service
     ln -s /usr/lib/systemd/system/mariadb.service /etc/systemd/system/multi-user.target.wants/mariadb.service
-
-    # Configure supervisord as one of systemd service
-    chmod 664 /etc/systemd/system/supervisord.service
-    ln -s /etc/systemd/system/supervisord.service /etc/systemd/system/multi-user.target.wants/supervisord.service
-
+    
     # Poppulate SlumDbd script.
-    chmod u+x /usr/bin/simulate && \
+    chmod u+x /usr/bin/simulate
     rm -rf $SLURM_ETC

@@ -68,7 +68,6 @@ RUN echo 'slurm:slurm' | chpasswd
 
 # SSH login fix. Otherwise user is kicked off after login
 RUN sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' -i /etc/pam.d/sshd
-ADD etc/ssh/sshd_config /etc/ssh/sshd_config
 RUN cd /etc/ssh/ && \
     ssh-keygen -t rsa -b 4096 -f ssh_host_rsa_key -N ''
 
@@ -81,11 +80,6 @@ RUN mkdir /var/spool/slurmctld /var/log/slurm && \
 
 # Enable MariaDB service
 RUN ln -s /usr/lib/systemd/system/mariadb.service /etc/systemd/system/multi-user.target.wants/mariadb.service
-
-# Configure supervisord as one of systemd service
-ADD etc/systemd/system/supervisord.service /etc/systemd/system/supervisord.service 
-RUN chmod 664 /etc/systemd/system/supervisord.service && \
-    ln -s /etc/systemd/system/supervisord.service /etc/systemd/system/multi-user.target.wants/supervisord.service
 
 # Poppulate SlumDbd script.
 ADD scripts/simulate /usr/bin/simulate
