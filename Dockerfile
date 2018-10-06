@@ -35,17 +35,13 @@ RUN yum -y update && \
     yum -y install \
     ntp \
     openssh-server \
-    supervisor \
     readline-devel \
     openssl \
     perl-ExtUtils-MakeMaker \
     pam-devel \
     mysql-devel \
     mariadb-server \
-    mariadb-devel \
-    && \
-    yum clean all && \
-    rm -rf /var/cache/yum/*
+    mariadb-devel
 
 # follow ubccr-slurm-simulator/slurm-simulator guide
 # Switch to slurm user so the next directories made are owned by slurm
