@@ -49,26 +49,9 @@ From: centos:7
     # mariadb-server mariadb-devel for mysql slurm account db
     yum -y update
     yum -y install epel-release
-    yum -y install \
-        git \
-        gcc-c++ \
-        python34 \
-        python34-libs \
-        python34-devel \
-        python34-numpy \
-        python34-scipy \ 
-        python34-pip
+    yum -y install git gcc-c++ python34 python34-libs python34-devel python34-numpy python34-scipy python34-pip
     pip3 install pymysql pandas
-    yum -y install \
-        ntp \
-        openssh-server \
-        readline-devel \
-        openssl \
-        perl-ExtUtils-MakeMaker \
-        pam-devel \
-        mysql-devel \
-        mariadb-server \
-        mariadb-devel
+    yum -y install ntp openssh-server readline-devel openssl perl-ExtUtils-MakeMaker pam-devel mysql-devel mariadb-server mariadb-devel
     yum clean all
     rm -rf /var/cache/yum/*
 
