@@ -1,12 +1,24 @@
 Bootstrap: docker
 
-From: centos/systemd:latest
+From: centos:7
 
 %labels
     maintainer="oatkrittin@gmail.com"
 
 %files
+    default/sim.conf /default/sim.conf
+    default/slurm.conf /default/slurm.conf
+    default/slurmdbd.conf /default/slurmdbd.conf
+    scripts/hostlist.py /usr/bin/hostlist.py
+    scripts/slurm_parser.py /usr/bin/slurm_parser.py
     scripts/simulate /usr/bin/simulate
+    scripts/process_sdiag.py /usr/bin/process_sdiag
+    scripts/process_simstat.py /usr/bin/process_simstat
+    scripts/process_sinfo.py /usr/bin/process_sinfo
+    scripts/process_sprio.py /usr/bin/process_sprio
+    scripts/process_squeue.py /usr/bin/process_squeue
+    scripts/get_slurm_conf.py /usr/bin/get_slurm_conf
+    scripts/overide_conf.py /usr/bin/overide_conf
     
 %post
     SLURM_SIMULATOR_SOURCE_REPO=https://github.com/ubccr-slurm-simulator/slurm_simulator.git \
@@ -21,8 +33,9 @@ From: centos/systemd:latest
         SLURM_HOME \
         SLURM_ETC \
         TRACES_DIR \
-        PATH
-        
+        PATH \
+        NOTVISIBLE
+   
     # Create users, set up SSH keys (for MPI), add sudoers
     # -r for system account, -s for route shell to none bash one, -m for make home.
     # Explicitly state UID & GID for synchronsization across cluster 
@@ -33,15 +46,22 @@ From: centos/systemd:latest
     # epel-repository
     # Development Tools included gcc, gcc-c++, rpm-guild, git, svn, etc.
     # readline-devel, openssl, perl-ExtUtils-MakeMaker, pam-devel, mysql-devel needed by slurm
-    # which, wget, net-tools, bind-tools(nslookup), telnet for debugging
     # mariadb-server mariadb-devel for mysql slurm account db
     yum -y update
     yum -y install epel-release
-    yum -y groupinstall "Development Tools"
+    yum -y install \
+        git \
+        gcc-c++ \
+        python34 \
+        python34-libs \
+        python34-devel \
+        python34-numpy \
+        python34-scipy \ 
+        python34-pip
+    pip3 install pymysql pandas
     yum -y install \
         ntp \
         openssh-server \
-        supervisor \
         readline-devel \
         openssl \
         perl-ExtUtils-MakeMaker \
@@ -51,7 +71,6 @@ From: centos/systemd:latest
         mariadb-devel
     yum clean all
     rm -rf /var/cache/yum/*
-
 
     # follow ubccr-slurm-simulator/slurm-simulator guide
     # Switch to slurm user so the next directories made are owned by slurm
@@ -90,9 +109,19 @@ From: centos/systemd:latest
     touch /var/log/slurm/slurmctld.log
     chown slurm: /var/log/slurm/slurmctld.log
 
-    # Enable MariaDB service
-    ln -s /usr/lib/systemd/system/mariadb.service /etc/systemd/system/multi-user.target.wants/mariadb.service
-    
-    # Poppulate SlumDbd script.
-    chmod u+x /usr/bin/simulate
-    rm -rf $SLURM_ETC
+    # Initialize mysql db and Fixed permission.
+    # after this we are ready to start daemon.
+    chmod g+rw /var/lib/mysql /var/log/mariadb /var/run/mariadb
+    mysql_install_db
+    chown -R mysql:mysql /var/lib/mysql 
+        
+    chmod u+x \
+        /usr/bin/simulate \
+        /usr/bin/process_sdiag \
+        /usr/bin/process_simstat \
+        /usr/bin/process_sinfo \
+        /usr/bin/process_sprio \
+        /usr/bin/process_squeue \
+        /usr/bin/get_slurm_conf \
+        /usr/bin/overide_conf
+    mkdir -p $SLURM_ETC

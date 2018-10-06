@@ -30,8 +30,8 @@ RUN yum -y update && \
         python34-devel \
         python34-numpy \
         python34-scipy \ 
-        python34-pip \
-    && \
+        python34-pip && \
+	pip3 install pymysql pandas && \
     yum -y install \
     ntp \
     openssh-server \
@@ -41,7 +41,10 @@ RUN yum -y update && \
     pam-devel \
     mysql-devel \
     mariadb-server \
-    mariadb-devel
+    mariadb-devel \
+    && \
+    yum clean all && \
+    rm -rf /var/cache/yum/*
 
 # follow ubccr-slurm-simulator/slurm-simulator guide
 # Switch to slurm user so the next directories made are owned by slurm
@@ -82,19 +85,40 @@ RUN mkdir /var/spool/slurmctld /var/log/slurm && \
   touch /var/log/slurm/slurmctld.log && \
   chown slurm: /var/log/slurm/slurmctld.log
 
-# Poppulate SlumDbd script.
+# Initialize mysql db and Fixed permission.
+# after this we are ready to start daemon.
+RUN chmod g+rw /var/lib/mysql /var/log/mariadb /var/run/mariadb && \
+    mysql_install_db && \
+    chown -R mysql:mysql /var/lib/mysql
+
+# Add Python libs
+ADD scripts/hostlist.py /usr/bin/hostlist.py
+ADD scripts/slurm_parser.py /usr/bin/slurm_parser.py
+
+# Add default configs to overide
+ADD default/sim.conf /default/sim.conf
+ADD default/slurm.conf /default/slurm.conf
+ADD default/slurmdbd.conf /default/slurmdbd.conf
+
+# All necessary scripts
 ADD scripts/simulate /usr/bin/simulate
 ADD scripts/process_sdiag.py /usr/bin/process_sdiag
 ADD scripts/process_simstat.py /usr/bin/process_simstat
 ADD scripts/process_sinfo.py /usr/bin/process_sinfo
+ADD scripts/process_sprio.py /usr/bin/process_sprio
 ADD scripts/process_squeue.py /usr/bin/process_squeue
+ADD scripts/get_slurm_conf.py /usr/bin/get_slurm_conf
+ADD scripts/overide_conf.py /usr/bin/overide_conf
+
 RUN chmod u+x \
     /usr/bin/simulate \
     /usr/bin/process_sdiag \
     /usr/bin/process_simstat \
     /usr/bin/process_sinfo \
+    /usr/bin/process_sprio \
     /usr/bin/process_squeue \
-    && \
-    rm -rf $SLURM_ETC
+    /usr/bin/get_slurm_conf \
+    /usr/bin/overide_conf && \
+    mkdir -p $SLURM_ETC
 
 VOLUME [ "/var/log/slurm" ]
