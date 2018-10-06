@@ -119,6 +119,7 @@ RUN chmod u+x \
     /usr/bin/process_squeue \
     /usr/bin/get_slurm_conf \
     /usr/bin/overide_conf && \
-    mkdir -p $SLURM_ETC
+    mkdir -p $SLURM_ETC && \
+    mkdir -p /default
 
 VOLUME [ "/var/log/slurm" ]

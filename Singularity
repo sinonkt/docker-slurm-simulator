@@ -125,3 +125,4 @@ From: centos:7
         /usr/bin/get_slurm_conf \
         /usr/bin/overide_conf
     mkdir -p $SLURM_ETC
+    mkdir -p /default
