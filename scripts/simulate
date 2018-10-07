@@ -43,8 +43,10 @@ mv /var/log/slurm/* .
 
 cluster="$(get_slurm_conf --config ${SLURM_SIMULATOR_ETC}/slurm.conf --parameter ClusterName)"
 
+echo "ClusterName:$cluster"
 process_sdiag --sdiag sdiag.out
 process_simstat --simstat simstat.out
 process_sinfo --sinfo sinfo.out --cluster $cluster
 process_sprio --sprio sprio.out
 process_squeue --squeue squeue.out --cluster $cluster
+kill $(jobs -p)
