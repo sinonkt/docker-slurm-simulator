@@ -115,6 +115,7 @@ From: centos:7
     mkdir -p $SLURM_ETC
 
     # Workaround can't run simulate with non-slurm user
+    # if run as root can start mysqld_safe.
     # dirty things.
     mkdir /var/run/mysqld
     chmod -R 777 \

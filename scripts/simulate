@@ -41,7 +41,7 @@ slurmctld -Dvvv
 
 mv /var/log/slurm/* .
 
-cluster="$(get_slurm_conf --config ${SLURM_SIMULATOR_ETC}/slurm.conf --parameter ClusterName)"
+cluster=$(get_slurm_conf --config ${SLURM_SIMULATOR_ETC}/slurm.conf --parameter ClusterName)
 
 echo "ClusterName:$cluster"
 process_sdiag --sdiag sdiag.out
