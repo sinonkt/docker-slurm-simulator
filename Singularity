@@ -5,6 +5,11 @@ From: centos:7
 %labels
     maintainer="oatkrittin@gmail.com"
 
+%environment
+    SLURM_HOME=/opt/slurm
+    PATH=${SLURM_HOME}/bin:${SLURM_HOME}/sbin:$PATH
+    export SLURM_HOME PATH
+
 %files
     default/sim.conf /sim.default.conf
     default/slurm.conf /slurm.default.conf
@@ -114,6 +119,8 @@ From: centos:7
         /usr/bin \
         $SLURM_HOME \
         /home/slurm \
+        /var/run \
+        /var/log/slurm \
         /var/lib/mysql \
         /var/log/mariadb \
         /var/run/mariadb \
