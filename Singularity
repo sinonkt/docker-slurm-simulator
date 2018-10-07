@@ -115,6 +115,8 @@ From: centos:7
     mkdir -p $SLURM_ETC
 
     # Workaround can't run simulate with non-slurm user
+    # dirty things.
+    mkdir /var/run/mysqld
     chmod -R 777 \
         /usr/bin \
         $SLURM_HOME \
@@ -122,5 +124,6 @@ From: centos:7
         /var/run \
         /var/log/slurm \
         /var/lib/mysql \
+        /var/run/mysqld \
         /var/log/mariadb \
         /var/run/mariadb \
