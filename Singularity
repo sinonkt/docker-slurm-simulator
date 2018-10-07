@@ -98,7 +98,7 @@ From: centos:7
     mysql_install_db
     chown -R mysql:mysql /var/lib/mysql 
         
-    chmod u+x \
+    chmod a+x \
         /usr/bin/simulate \
         /usr/bin/process_sdiag \
         /usr/bin/process_simstat \

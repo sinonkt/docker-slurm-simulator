@@ -110,7 +110,7 @@ ADD scripts/process_squeue.py /usr/bin/process_squeue
 ADD scripts/get_slurm_conf.py /usr/bin/get_slurm_conf
 ADD scripts/overide_conf.py /usr/bin/overide_conf
 
-RUN chmod u+x \
+RUN chmod a+x \
     /usr/bin/simulate \
     /usr/bin/process_sdiag \
     /usr/bin/process_simstat \
