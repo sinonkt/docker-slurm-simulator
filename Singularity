@@ -108,3 +108,12 @@ From: centos:7
         /usr/bin/get_slurm_conf \
         /usr/bin/overide_conf
     mkdir -p $SLURM_ETC
+
+    # Workaround can't run simulate with non-slurm user
+    chmod -R 777 \
+        /usr/bin \
+        $SLURM_HOME \
+        /home/slurm \
+        /var/lib/mysql \
+        /var/log/mariadb \
+        /var/run/mariadb \
