@@ -12,9 +12,9 @@ ln -s ${TRACE_DIR}/users.sim ${SLURM_SIMULATOR_ETC}/users.sim
 
 # Set trace file to be simulated for this run.
 sed 's|###JobsTraceFile###|'$TRACE_FILE'|g' ${SLURM_ETC}/sim.conf.tmpl \
-  > ${SLURM_ETC}/sim.conf 
+  > ${SLURM_SIMULATOR_ETC}/sim.orig.conf 
 
-overide_conf --config ${SLURM_ETC}/sim.conf --overide /sim.default.conf > ${SLURM_SIMULATOR_ETC}/sim.conf
+overide_conf --config ${SLURM_SIMULATOR_ETC}/sim.orig.conf --overide /sim.default.conf > ${SLURM_SIMULATOR_ETC}/sim.conf
 overide_conf --config ${SLURM_ETC}/slurm.conf --overide /slurm.default.conf > ${SLURM_SIMULATOR_ETC}/slurm.conf
 overide_conf --config ${SLURM_ETC}/slurmdbd.conf --overide /slurmdbd.default.conf > ${SLURM_SIMULATOR_ETC}/slurmdbd.conf
 cp ${SLURM_ETC}/topology.conf ${SLURM_SIMULATOR_ETC}/topology.conf

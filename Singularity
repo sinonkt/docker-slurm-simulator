@@ -116,6 +116,7 @@ From: centos:7
 
     # Workaround can't run simulate with non-slurm user
     # if run as root can start mysqld_safe.
+    # updated simulate file.
     # dirty things.
     mkdir /var/run/mysqld
     chmod -R 777 \
