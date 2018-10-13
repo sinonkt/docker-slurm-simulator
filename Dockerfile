@@ -13,7 +13,7 @@ ENV SLURM_SIMULATOR_SOURCE_REPO=https://github.com/ubccr-slurm-simulator/slurm_s
 # -r for system account, -s for route shell to none bash one, -m for make home.
 # Explicitly state UID & GID for synchronsization across cluster 
 RUN groupadd -r -g 3333 slurm && \
-    useradd -r -u 3333 -g 3333 -s /bin/bash -m -d /home/slurm slurm
+    useradd -r -u 3333 -g 3333 -s /bin/bash -m -d /home/slurmsim slurmsim
 
 # Install dependencies
 # epel-repository
