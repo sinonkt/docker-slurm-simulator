@@ -45,7 +45,7 @@ From: centos:7
     # -r for system account, -s for route shell to none bash one, -m for make home.
     # Explicitly state UID & GID for synchronsization across cluster 
     groupadd -r -g 3333 slurm
-    useradd -r -u 3333 -g 3333 -s /bin/bash -m -d /home/slurmsim slurmsim
+    useradd -r -u 3333 -g 3333 -s /bin/bash -m -d /home/slurm slurm
 
     # Install dependencies
     # epel-repository
